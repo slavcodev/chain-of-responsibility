@@ -20,17 +20,14 @@ notifications:
 before_install:
   - phpenv config-rm xdebug.ini || return 0
   - mkdir -p $LOG_DIR || return 0
-  - alias test-code="./vendor/bin/phpunit" || return 0
-  - alias test-coverage="phpdbg -qrr ./vendor/bin/phpunit --coverage-clover=$CLOVER_PATH" || return 0
-  - alias share-coverage="./vendor/bin/ocular code-coverage:upload --format=php-clover $CLOVER_PATH" || return 0
 
 install:
   - composer self-update
   - composer install --no-interaction --prefer-source
 
 script:
-  - if [[ $EXECUTE_COVERAGE == 'true' ]]; then test-coverage ; fi
-  - if [[ $EXECUTE_COVERAGE != 'true' ]]; then test-code ; fi
+  - if [[ $EXECUTE_COVERAGE == 'true' ]]; then phpdbg -qrr ./vendor/bin/phpunit --coverage-clover=$CLOVER_PATH ; fi
+  - if [[ $EXECUTE_COVERAGE != 'true' ]]; then ./vendor/bin/phpunit ; fi
 
 after_script:
-  - if [[ $EXECUTE_COVERAGE == 'true' ]]; then share-coverage; fi
+  - if [[ $EXECUTE_COVERAGE == 'true' ]]; then ./vendor/bin/ocular code-coverage:upload --format=php-clover $CLOVER_PATH; fi
