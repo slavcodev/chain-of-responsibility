@@ -1,0 +1,36 @@
+sudo: false
+
+language: php
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 7.1
+      env:
+        - EXECUTE_COVERAGE=true
+        - LOG_DIR=./build/logs
+        - CLOVER_PATH=$LOG_DIR/clover.xml
+    - php: 7.2
+  allow_failures:
+    - php: 7.2
+
+notifications:
+  email: false
+
+before_install:
+  - phpenv config-rm xdebug.ini || return 0
+  - mkdir -p $LOG_DIR || return 0
+  - alias test-code="./vendor/bin/phpunit" || return 0
+  - alias test-coverage="phpdbg -qrr ./vendor/bin/phpunit --coverage-clover=$CLOVER_PATH" || return 0
+  - alias share-coverage="./vendor/bin/ocular code-coverage:upload --format=php-clover $CLOVER_PATH" || return 0
+
+install:
+  - composer self-update
+  - composer install --no-interaction --prefer-source
+
+script:
+  - if [[ $EXECUTE_COVERAGE == 'true' ]]; then test-coverage ; fi
+  - if [[ $EXECUTE_COVERAGE != 'true' ]]; then test-code ; fi
+
+after_script:
+  - if [[ $EXECUTE_COVERAGE == 'true' ]]; then share-coverage; fi

@@ -33,7 +33,8 @@
     "test": "phpunit",
     "test-coverage": "phpunit --coverage-clover build/logs/clover.xml",
     "report-coverage": "phpunit --coverage-html build/logs/report",
-    "show-coverage": "phpunit --coverage-clover build/logs/clover.xml --coverage-text=php://stdout"
+    "show-coverage": "phpunit --coverage-clover build/logs/clover.xml --coverage-text=php://stdout",
+    "share-coverage": "ocular code-coverage:upload --format=php-clover ./build/logs/clover.xml"
   },
   "extra": {
     "branch-alias": {
